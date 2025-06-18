@@ -1,17 +1,8 @@
-# 🗺️ Serendipity Maps ✨
+# 🗺️ GeoGemini ✨
 
 **Gemini AI Destekli Akıllı Harita Gezgini**
 
 Sıradan rotaların dışına çıkın! Bu proje, Google Gemini AI'ın gücünü kullanarak size dünyanın az bilinen antik, metropol, yeşil, gastronomik ve manevi harikalarını keşfettirir. Her tıklamada yeni bir macera sizi bekliyor.
-
----
-
-## 📸 Ekran Görüntüsü
-
-*Projenizin çalışan bir GIF'ini veya ekran görüntüsünü buraya eklemeniz, ziyaretçilerin ilgisini çekmek için harika bir yoldur!*
-
-![Serendipity Maps Demo](https://placehold.co/800x500/181a1b/c3c6c7?text=Proje+Ekran+G%C3%B6r%C3%BCnt%C3%BCs%C3%BC)
-*<p align="center">Uygulamanın çalışan hali</p>*
 
 ---
 
@@ -42,8 +33,8 @@ Projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izleyin:
 
 1.  **Depoyu Klonlayın:**
     ```bash
-    git clone https://github.com/KULLANICI_ADINIZ/SerendipityMaps.git
-    cd SerendipityMaps
+    git clone https://github.com/yucel-gumus/GeoGemini.git
+    cd GeoGemini
     ```
 
 2.  **Bağımlılıkları Yükleyin:**
