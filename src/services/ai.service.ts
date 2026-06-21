@@ -1,8 +1,8 @@
 import { Location } from '@/types';
 
-const API_URL =
-    import.meta.env.VITE_API_URL ||
-    (import.meta.env.PROD ? 'https://api.yucelgumus.dev' : 'http://127.0.0.1:8000');
+const BFF_URL =
+  import.meta.env.VITE_BFF_URL ||
+  (import.meta.env.PROD ? 'https://pages-bff.vercel.app' : 'http://127.0.0.1:3099');
 
 interface RecommendPlaceResponse {
     success: boolean;
@@ -20,12 +20,9 @@ class AIService {
 
     async generateRecommendation(prompt: string): Promise<Location | null> {
         try {
-            const response = await fetch(`${API_URL}/api/recommend-place`, {
+            const response = await fetch(`${BFF_URL}/api/geo/recommend-place`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': import.meta.env.VITE_API_KEY || import.meta.env.VITE_CLIENT_API_KEY || '',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     prompt,
                     visited_locations: this.visitedLocations,

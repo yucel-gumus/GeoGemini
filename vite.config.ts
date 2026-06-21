@@ -5,29 +5,15 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   const production = mode === 'production';
+  const bff =
+    env.VITE_BFF_URL ||
+    process.env.VITE_BFF_URL ||
+    (production ? 'https://pages-bff.vercel.app' : 'http://127.0.0.1:3099');
   return {
     base: '/GeoGemini/',
     plugins: [react()],
     define: {
-      'import.meta.env.VITE_API_URL': JSON.stringify(
-        env.VITE_API_URL ||
-          process.env.VITE_API_URL ||
-          (production ? 'https://api.yucelgumus.dev' : 'http://127.0.0.1:8000')
-      ),
-      'import.meta.env.VITE_API_KEY': JSON.stringify(
-        env.VITE_API_KEY ||
-          process.env.VITE_API_KEY ||
-          env.VITE_CLIENT_API_KEY ||
-          process.env.VITE_CLIENT_API_KEY ||
-          ''
-      ),
-      'import.meta.env.VITE_CLIENT_API_KEY': JSON.stringify(
-        env.VITE_CLIENT_API_KEY ||
-          process.env.VITE_CLIENT_API_KEY ||
-          env.VITE_API_KEY ||
-          process.env.VITE_API_KEY ||
-          ''
-      ),
+      'import.meta.env.VITE_BFF_URL': JSON.stringify(bff),
     },
     resolve: {
       alias: {
