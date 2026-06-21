@@ -15,7 +15,18 @@ export default defineConfig(({ mode }) => {
           (production ? 'https://api.yucelgumus.dev' : 'http://localhost:8000')
       ),
       'import.meta.env.VITE_API_KEY': JSON.stringify(
-        env.VITE_API_KEY || process.env.VITE_API_KEY || ''
+        env.VITE_API_KEY ||
+          process.env.VITE_API_KEY ||
+          env.VITE_CLIENT_API_KEY ||
+          process.env.VITE_CLIENT_API_KEY ||
+          ''
+      ),
+      'import.meta.env.VITE_CLIENT_API_KEY': JSON.stringify(
+        env.VITE_CLIENT_API_KEY ||
+          process.env.VITE_CLIENT_API_KEY ||
+          env.VITE_API_KEY ||
+          process.env.VITE_API_KEY ||
+          ''
       ),
     },
     resolve: {

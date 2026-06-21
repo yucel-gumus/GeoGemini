@@ -22,7 +22,7 @@ class AIService {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-API-Key': import.meta.env.VITE_API_KEY,
+                    'X-API-Key': import.meta.env.VITE_API_KEY || import.meta.env.VITE_CLIENT_API_KEY || '',
                 },
                 body: JSON.stringify({
                     prompt,
