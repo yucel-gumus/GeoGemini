@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -28,7 +29,9 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NODE_ENV: production
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_API_KEY: ${{ vars.VITE_API_KEY }}
 
       - name: Configure Git
         run: |
@@ -36,6 +39,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
 
-      # Pushes the contents of dist/ to the gh-pages branch using the gh-pages npm package
       - name: Deploy to GitHub Pages
         run: npm run deploy

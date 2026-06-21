@@ -20,7 +20,7 @@ Sıradan rotaların dışına çıkın! Bu uygulama, yapay zeka gücünü kullan
 | Katman | Teknoloji |
 |--------|-----------|
 | Frontend | React 18, TypeScript, Vite, Tailwind CSS |
-| Backend | Python FastAPI, Google Gemini API |
+| Backend | `python_backend` (Gemini Gateway) — `POST /api/recommend-place`, `X-API-Key` |
 | Harita | Leaflet.js, OpenStreetMap, CARTO Voyager |
 
 ---
@@ -35,10 +35,13 @@ cd GeoGemini
 npm install
 ```
 
-`.env` dosyası oluşturun:
+`.env` dosyası oluşturun (`.env.example` kopyalayın):
 ```
 VITE_API_URL=http://localhost:8000
+VITE_API_KEY=your_client_api_key
 ```
+
+Canlı: https://yucel-gumus.github.io/GeoGemini/ — GitHub Actions build için repo **Variables**: `VITE_API_URL`, `VITE_API_KEY`.
 
 Geliştirme sunucusunu başlatın:
 ```bash
@@ -47,18 +50,7 @@ npm run dev
 
 ### 2. Backend
 
-Backend API'yi ayrı bir terminal'de başlatın:
-```bash
-cd backend
-pip install -r requirements.txt
-python main.py
-```
-
-Backend `.env` dosyası:
-```
-GEMINI_API_KEY=your_api_key_here
-ALLOWED_ORIGINS=http://localhost:5173
-```
+Gateway: `python_backend` (`https://api.yucelgumus.dev`). Yerel: `uvicorn` ile `:8000`. CORS’ta `https://yucel-gumus.github.io` gerekli.
 
 ---
 
