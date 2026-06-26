@@ -1,68 +1,114 @@
-# 🗺️ SightseeingAI
+# 🗺️ GeoGemini (SightseeingAI)
 
-**AI Destekli Akıllı Harita Gezgini**
+**AI destekli akıllı harita gezgini** — antik, metropol, yeşil, gastronomi ve manevi kategorilerde dünyadan benzersiz yer önerileri. Tekrarlayan önerileri önlemek için ziyaret edilen noktalar istemci tarafında tutulur; backend **Gemini Gateway** ile konum üretir ve geocoding yapar.
 
-Sıradan rotaların dışına çıkın! Bu uygulama, yapay zeka gücünü kullanarak size dünyanın az bilinen antik, metropol, yeşil, gastronomik ve manevi harikalarını keşfettirir.
-
----
-
-## 🚀 Özellikler
-
-- 🧠 **Akıllı Keşif:** AI her kategori için size özel, daha önce önerilmemiş yerler bulur
-- 🌍 **İnteraktif Harita:** Leaflet.js ile hızlı ve etkileşimli harita
-- 🚫 **Tekrara Son:** Ziyaret edilen yerler hafızada tutulur
-- ⚡ **Modern Arayüz:** Light mode, minimal tasarım
+**Canlı:** [yucel-gumus.github.io/GeoGemini](https://yucel-gumus.github.io/GeoGemini/)  
+**GitHub:** [yucel-gumus/GeoGemini](https://github.com/yucel-gumus/GeoGemini)
 
 ---
 
-## 🛠️ Teknolojiler
+## Özellikler
 
-| Katman | Teknoloji |
-|--------|-----------|
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS |
-| Backend | `python_backend` (Gemini Gateway) — `POST /api/recommend-place`, `X-API-Key` |
-| Harita | Leaflet.js, OpenStreetMap, CARTO Voyager |
+- 🧠 Kategori bazlı AI keşif (daha önce önerilmeyen yerler)
+- 🌍 Leaflet + OpenStreetMap / CARTO Voyager karoları
+- 🚫 `visited` listesi ile tekrar önleme
+- ⚡ Vite + React 18 + TypeScript + Tailwind
+- 🔒 Production’da API key’siz mod: **pages-bff** proxy
 
 ---
 
-## ⚙️ Kurulum
+## Veri akışı
 
-### 1. Frontend
+```
+Kullanıcı kategori seçer
+        │
+        ▼
+POST { category, visited[], ... }
+        │
+        ├─► VITE_BFF_URL/api/geo/recommend-place  (önerilen, Pages)
+        │         └─► pages-bff → gateway /api/recommend-place
+        │
+        └─► VITE_API_URL + X-API-Key            (doğrudan, dev)
+        │
+        ▼
+{ name, lat, lng, description, ... }
+        │
+        ▼
+Harita flyTo + marker + kart UI
+```
+
+Gateway tarafında Gemini prompt + Nominatim / geocoding birleşimi çalışır.
+
+---
+
+## Kurulum
 
 ```bash
 git clone https://github.com/yucel-gumus/GeoGemini.git
 cd GeoGemini
 npm install
+cp .env.example .env
 ```
 
-`.env` dosyası oluşturun (`.env.example` kopyalayın):
-```
+```env
+# Geliştirme (doğrudan gateway)
 VITE_API_URL=http://localhost:8000
-VITE_API_KEY=your_client_api_key
+VITE_API_KEY=your_client_key
+
+# GitHub Pages build (BFF)
+VITE_BFF_URL=https://pages-bff.vercel.app
 ```
 
-Canlı: https://yucel-gumus.github.io/GeoGemini/ — GitHub Actions build için repo **Variables**: `VITE_API_URL`, `VITE_API_KEY`.
-
-Geliştirme sunucusunu başlatın:
 ```bash
 npm run dev
 ```
 
-### 2. Backend
+---
 
-Gateway: `python_backend` (`https://api.yucelgumus.dev`). Yerel: `uvicorn` ile `:8000`. CORS’ta `https://yucel-gumus.github.io` gerekli.
+## GitHub Pages deploy
+
+- `main` push → GitHub Actions
+- Repo **Variables:** `VITE_API_URL`, `VITE_API_KEY` veya `VITE_BFF_URL`
+- Base path: `https://yucel-gumus.github.io/GeoGemini/`
+
+Gateway CORS: `https://yucel-gumus.github.io` origin izinli olmalı (BFF kullanıldığında tarayıcı yalnızca BFF’e konuşur).
 
 ---
 
-## 💡 Nasıl Çalışır?
+## Kategoriler (örnek)
 
-1. Kullanıcı kategori butonuna tıklar (Antik, Metropol, Yeşil, vb.)
-2. Frontend, Backend API'ye istek gönderir
-3. Backend, Gemini AI'dan öneri alır ve geocoding yapar
-4. Harita yeni konuma animate ederek zoom olur
+| Kategori | Amaç |
+|----------|------|
+| Antik | Tarihî ve arkeolojik noktalar |
+| Metropol | Şehir simgeleri, modern mimari |
+| Yeşil | Doğa, parklar, manzaralar |
+| Gastronomi | Yerel mutfak durakları |
+| Manevi | Kutsal / kültürel mekânlar |
+
+Tam liste UI ve gateway prompt şablonlarında tanımlıdır.
 
 ---
 
-## 📄 Lisans
+## Teknoloji
 
-MIT Lisansı
+| Katman | Stack |
+|--------|--------|
+| Frontend | React, Vite, Tailwind, Leaflet |
+| Backend | [llm_api](https://github.com/yucel-gumus/llm_api) — `/api/recommend-place` |
+| BFF | [pages-bff](https://github.com/yucel-gumus/pages-bff) |
+
+---
+
+## Sorun giderme
+
+| Belirti | Çözüm |
+|---------|--------|
+| 403 gateway | Client key düz metin mi; base64 encode etmeyin |
+| CORS | BFF origin veya `ALLOWED_ORIGINS` |
+| Boş harita | Geocoding hatası — gateway logları |
+
+---
+
+## Lisans
+
+MIT
