@@ -4,11 +4,10 @@ import path from 'path';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
-  const production = mode === 'production';
   const bff =
     env.VITE_BFF_URL ||
     process.env.VITE_BFF_URL ||
-    (production ? 'https://pages-bff.vercel.app' : 'http://127.0.0.1:3099');
+    'https://pages-bff.vercel.app';
   return {
     base: '/GeoGemini/',
     plugins: [react()],

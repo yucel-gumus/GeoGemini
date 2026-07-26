@@ -5,6 +5,7 @@ export type Location = {
     lat: number;
     lng: number;
     caption: string;
+    imageUrl?: string;
 };
 
 export type PresetCategory = 'Antik' | 'Metropol' | 'Yeşil' | 'Gastronomik' | 'Manevi';
@@ -28,4 +29,5 @@ export type MapState = {
 export interface AIResponse {
     location: string;
     caption: string;
+    imageUrl?: string;
 }

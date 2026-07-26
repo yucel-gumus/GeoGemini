@@ -1,42 +1,38 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
-  --gradient-warm: linear-gradient(135deg, #f97316 0%, #ef4444 50%, #ec4899 100%);
-  --gradient-cool: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+  /* 60-30-10 Design System Palette */
+  --color-60-canvas: #FFEBD3;      /* 60% Warm Cream Base & Canvas */
+  --color-30-surface: #FFB6A6;     /* 30% Structural Panels & Cards */
+  --color-10-accent: #9BCEC1;      /* 10% High-Pop Accent CTAs & Highlights */
 
-  --color-bg: #f8fafc;
-  --color-surface: rgba(255, 255, 255, 0.85);
-  --color-surface-hover: rgba(255, 255, 255, 0.95);
-  --color-border: rgba(0, 0, 0, 0.08);
-  --color-text: #1e293b;
-  --color-text-muted: #64748b;
+  /* High Contrast Text Tones */
+  --color-text-dark: #2D1810;      /* Deep Espresso for 100% WCAG AAA Legibility on Light Cards */
+  --color-text-light: #FFEBD3;     /* Warm Cream Text on Dark/Coral Cards */
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1), 0 6px 10px rgba(0, 0, 0, 0.08);
-  --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.15);
+  /* Translucent Glass Variations */
+  --color-canvas-80: rgba(255, 235, 211, 0.85);
+  --color-surface-95: rgba(255, 182, 166, 0.95);
+  --color-accent-40: rgba(155, 206, 193, 0.40);
 
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  /* Typography & Geometry */
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--color-text-dark);
+  background-color: var(--color-60-canvas);
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: light;
-  color: var(--color-text);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--color-bg);
+  background-color: var(--color-60-canvas);
+  color: var(--color-text-dark);
 }
 
 #root {
@@ -46,130 +42,147 @@ body {
   flex-direction: column;
 }
 
-@keyframes float {
+/* Glassmorphism & UI Card Utilities */
+.glass-panel {
+  background: rgba(255, 235, 211, 0.94) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid #FFB6A6 !important;
+  box-shadow: 0 16px 40px rgba(45, 24, 16, 0.12), 0 4px 12px rgba(155, 206, 193, 0.2);
+  color: #2D1810;
+}
 
-  0%,
-  100% {
-    transform: translateY(0px);
+.glass-panel-coral {
+  background: rgba(255, 182, 166, 0.96) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid #FFEBD3 !important;
+  box-shadow: 0 16px 40px rgba(45, 24, 16, 0.15);
+  color: #2D1810;
+}
+
+.card-shadow {
+  box-shadow: 0 10px 30px rgba(45, 24, 16, 0.1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FFEBD3;
+}
+::-webkit-scrollbar-thumb {
+  background: #FFB6A6;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9BCEC1;
+}
+
+/* Animations */
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(155, 206, 193, 0.6);
   }
-
-  50% {
-    transform: translateY(-3px);
+  70% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 20px rgba(155, 206, 193, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(155, 206, 193, 0);
   }
 }
 
-@keyframes shimmer {
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes shimmer-pastel {
   0% {
     background-position: -200% 0;
   }
-
   100% {
     background-position: 200% 0;
   }
 }
 
-@keyframes marker-pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-
-  100% {
-    transform: scale(2.5);
-    opacity: 0;
-  }
+.animate-radar {
+  animation: radar-pulse 2s infinite ease-in-out;
 }
 
-@keyframes gradient-shift {
-
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
+.animate-float {
+  animation: float-gentle 4s ease-in-out infinite;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.glassmorphism {
-  background: var(--color-surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-lg);
-}
-
-.glassmorphism:hover {
-  background: var(--color-surface-hover);
-  box-shadow: var(--shadow-lg), var(--shadow-glow);
-}
-
-.gradient-text {
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.shimmer-loading {
-  background: linear-gradient(90deg,
-      rgba(99, 102, 241, 0.1) 0%,
-      rgba(99, 102, 241, 0.3) 50%,
-      rgba(99, 102, 241, 0.1) 100%);
+.shimmer-bg {
+  background: linear-gradient(
+    90deg,
+    #FFEBD3 0%,
+    rgba(155, 206, 193, 0.4) 50%,
+    #FFEBD3 100%
+  );
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer-pastel 2s infinite;
+}
+
+/* Leaflet Map Styling Override */
+.leaflet-container {
+  background: #FFEBD3 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
 .leaflet-popup-content-wrapper {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(99, 102, 241, 0.2) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 0 20px rgba(99, 102, 241, 0.1) !important;
+  background: #FFEBD3 !important;
+  border: 2px solid #FFB6A6 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 14px 36px rgba(45, 24, 16, 0.18) !important;
+  color: #2D1810 !important;
 }
 
 .leaflet-popup-content {
-  color: #1e293b !important;
-  font-family: 'Inter', sans-serif !important;
-  font-weight: 500 !important;
+  color: #2D1810 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 700 !important;
   margin: 14px 18px !important;
   font-size: 14px !important;
 }
 
 .leaflet-popup-tip {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: #FFEBD3 !important;
+  border-left: 2px solid #FFB6A6 !important;
+  border-bottom: 2px solid #FFB6A6 !important;
 }
 
-.leaflet-container {
-  background: #e2e8f0 !important;
+.leaflet-popup-close-button {
+  display: none !important;
 }
 
 .leaflet-control-zoom {
   border: none !important;
-  box-shadow: var(--shadow-md) !important;
-  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(45, 24, 16, 0.15) !important;
+  border-radius: 14px !important;
   overflow: hidden;
 }
 
 .leaflet-control-zoom a {
-  background: rgba(255, 255, 255, 0.9) !important;
-  color: #1e293b !important;
-  border: none !important;
-  backdrop-filter: blur(8px) !important;
+  background: #FFEBD3 !important;
+  color: #2D1810 !important;
+  border: 1.5px solid #FFB6A6 !important;
+  font-weight: 800 !important;
+  transition: all 0.2s ease !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background: white !important;
-  color: #6366f1 !important;
+  background: #9BCEC1 !important;
+  color: #2D1810 !important;
+  border-color: #9BCEC1 !important;
 }
