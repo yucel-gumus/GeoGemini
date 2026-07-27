@@ -1,3 +1,10 @@
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  'https://python-backend-270384591051.europe-west3.run.app';
+const API_KEY =
+  import.meta.env.VITE_API_KEY ||
+  'a9c0347c273b6e94df81d6734fd6735a645d0f36ef0e5ea553901a95bc47de5f';
+
 export class ImageService {
   private cache: Map<string, string> = new Map();
 
@@ -13,65 +20,104 @@ export class ImageService {
       return this.cache.get(cacheKey)!;
     }
 
+    // Step 1: Call Python Backend Google Maps Places Photo / Street View API
+    try {
+      const queryParams = new URLSearchParams({ name: locationName });
+      if (lat !== undefined) queryParams.append('lat', lat.toString());
+      if (lng !== undefined) queryParams.append('lng', lng.toString());
+
+      const res = await fetch(`${API_URL}/api/places/photo?${queryParams.toString()}`, {
+        headers: {
+          'X-API-Key': API_KEY,
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.url) {
+          this.cache.set(cacheKey, data.url);
+          return data.url;
+        }
+      }
+    } catch (err) {
+      console.warn('Backend photo API fetch error:', err);
+    }
+
+    // Step 2: Fallback to Google Maps Static Maps Satellite API if API Key is in frontend env
     const mapsApiKey =
       import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
       import.meta.env.GOOGLE_MAPS_API_KEY;
 
-    if (!mapsApiKey) {
-      return null;
+    if (mapsApiKey) {
+      const cleanName = encodeURIComponent(
+        locationName.split(',')[0].replace(/\(.*?\)/g, '').trim()
+      );
+      const centerParam =
+        lat !== undefined && lng !== undefined
+          ? `${lat},${lng}`
+          : cleanName;
+      const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${centerParam}&zoom=13&size=800x500&maptype=satellite&markers=color:red%7C${centerParam}&key=${mapsApiKey}`;
+      this.cache.set(cacheKey, staticMapUrl);
+      return staticMapUrl;
     }
 
-    const cleanName = locationName.split(',')[0].replace(/\(.*?\)/g, '').trim();
+    // Step 3: High resolution category visual fallback if offline or no key available
+    const fallbackUrl = this.getCategoryFallbackImage(locationName);
+    this.cache.set(cacheKey, fallbackUrl);
+    return fallbackUrl;
+  }
 
-    // Step 1: Check Google Street View Metadata API (Verify 360° coverage exists before calling Street View)
-    if (lat !== undefined && lng !== undefined) {
-      try {
-        const metadataUrl = `https://maps.googleapis.com/maps/api/streetview/metadata?location=${lat},${lng}&key=${mapsApiKey}`;
-        const metaRes = await fetch(metadataUrl);
-        if (metaRes.ok) {
-          const metaData = await metaRes.json();
-          if (metaData.status === 'OK') {
-            // Street View coverage exists! Return real 360° street view panorama
-            const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=800x500&location=${lat},${lng}&fov=90&heading=0&pitch=0&key=${mapsApiKey}`;
-            this.cache.set(cacheKey, streetViewUrl);
-            return streetViewUrl;
-          }
-        }
-      } catch {
-        // Ignore metadata fetch errors and fallback to Places Photo API
-      }
+  private getCategoryFallbackImage(locationName: string): string {
+    const lower = locationName.toLowerCase();
+
+    // Desert / Çöl / Vaha
+    if (
+      lower.includes('çöl') ||
+      lower.includes('vaha') ||
+      lower.includes('desert') ||
+      lower.includes('wadi') ||
+      lower.includes('atacama') ||
+      lower.includes('salar')
+    ) {
+      return 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80';
     }
 
-    // Step 2: Try Google Places API (Find Place / Text Search) to fetch real place photo
-    try {
-      const placesSearchUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodeURIComponent(
-        cleanName
-      )}&inputtype=textquery&fields=photos,geometry&key=${mapsApiKey}`;
-      const placesRes = await fetch(placesSearchUrl);
-      if (placesRes.ok) {
-        const placesData = await placesRes.json();
-        if (
-          placesData.status === 'OK' &&
-          placesData.candidates?.[0]?.photos?.[0]?.photo_reference
-        ) {
-          const photoRef = placesData.candidates[0].photos[0].photo_reference;
-          const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoRef}&key=${mapsApiKey}`;
-          this.cache.set(cacheKey, photoUrl);
-          return photoUrl;
-        }
-      }
-    } catch {
-      // Ignore Places API fetch errors and fallback to Static Maps Satellite View
+    // Coastal / Sahil / Ada / Amalfi
+    if (
+      lower.includes('sahil') ||
+      lower.includes('ada') ||
+      lower.includes('kıyı') ||
+      lower.includes('amalfi') ||
+      lower.includes('santorini') ||
+      lower.includes('zanzibar')
+    ) {
+      return 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80';
     }
 
-    // Step 3: Google Maps Static Maps API (Satellite View with Red Location Marker)
-    const centerParam =
-      lat !== undefined && lng !== undefined
-        ? `${lat},${lng}`
-        : encodeURIComponent(cleanName);
-    const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${centerParam}&zoom=13&size=800x500&maptype=satellite&markers=color:red%7C${centerParam}&key=${mapsApiKey}`;
-    this.cache.set(cacheKey, staticMapUrl);
-    return staticMapUrl;
+    // Antique / Antik / Ruin
+    if (
+      lower.includes('antik') ||
+      lower.includes('harabe') ||
+      lower.includes('petra') ||
+      lower.includes('göbeklitepe') ||
+      lower.includes('efes')
+    ) {
+      return 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=800&q=80';
+    }
+
+    // Metropolis / Metropol / City
+    if (
+      lower.includes('tokyo') ||
+      lower.includes('seul') ||
+      lower.includes('york') ||
+      lower.includes('londra') ||
+      lower.includes('metropol')
+    ) {
+      return 'https://images.unsplash.com/photo-1477959858617-67f30ac4ce78?auto=format&fit=crop&w=800&q=80';
+    }
+
+    // Default nature landscape
+    return 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=800&q=80';
   }
 }
 
