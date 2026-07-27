@@ -6,14 +6,12 @@ import { Caption } from '@/components/UI/Caption';
 import { useDiscovery } from '@/hooks/useDiscovery';
 import { PRESETS } from '@/constants';
 import { Location, Preset } from '@/types';
-import { aiService } from '@/services/ai.service';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   const { location: defaultLocation, caption, isLoading, discoverPlace } = useDiscovery();
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [currentCaption, setCurrentCaption] = useState<string>('');
-  const [customLoading, setCustomLoading] = useState<boolean>(false);
   const [activePresetId, setActivePresetId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [history, setHistory] = useState<Location[]>([]);
@@ -39,30 +37,7 @@ function App() {
     [discoverPlace]
   );
 
-  // Handle Custom Prompt Search
-  const handleCustomSearch = useCallback(async (prompt: string) => {
-    setCustomLoading(true);
-    setActivePresetId(null);
-    setCurrentCaption('Özel konum aranıyor...');
-
-    try {
-      const result = await aiService.generateRecommendation(prompt);
-      if (result) {
-        setCurrentLocation(result);
-        setCurrentCaption(result.caption);
-        setHistory((prev) => [result, ...prev.filter((i) => i.name !== result.name)]);
-      } else {
-        setCurrentCaption('Arama sonucunda uygun bir konum bulunamadı.');
-      }
-    } catch (err) {
-      console.error(err);
-      setCurrentCaption('Arama yapılırken bir hata oluştu.');
-    } finally {
-      setCustomLoading(false);
-    }
-  }, []);
-
-  // Keyboard Shortcuts (1-5 keys for presets)
+  // Keyboard Shortcuts (1-9 and 0 keys for presets)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore if user is typing in an input
@@ -73,9 +48,15 @@ function App() {
         return;
       }
 
-      const keyIndex = parseInt(e.key, 10);
-      if (keyIndex >= 1 && keyIndex <= PRESETS.length) {
-        const selectedPreset = PRESETS[keyIndex - 1];
+      let presetIndex = -1;
+      if (e.key >= '1' && e.key <= '9') {
+        presetIndex = parseInt(e.key, 10) - 1;
+      } else if (e.key === '0') {
+        presetIndex = 9;
+      }
+
+      if (presetIndex >= 0 && presetIndex < PRESETS.length) {
+        const selectedPreset = PRESETS[presetIndex];
         if (selectedPreset) {
           handlePresetSelect(selectedPreset);
         }
@@ -85,8 +66,6 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handlePresetSelect]);
-
-  const activeLoading = isLoading || customLoading;
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#9BCEC1] font-sans">
@@ -105,7 +84,7 @@ function App() {
       </div>
 
       {/* Main Overlay UI Layer */}
-      <div className="absolute inset-0 z-20 pointer-events-none flex flex-col justify-between p-3 md:p-6 space-y-4">
+      <div className="absolute inset-0 z-20 pointer-events-none flex flex-col p-3 md:p-6 space-y-3">
         {/* Top Header */}
         <Header
           location={currentLocation}
@@ -113,23 +92,22 @@ function App() {
           onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
         />
 
-        {/* Middle Body Container (Sidebar & Main Display) */}
-        <div className="flex-1 flex gap-4 items-start overflow-hidden pointer-events-none">
+        {/* Middle & Bottom Overlay Canvas Area */}
+        <div className="relative flex-1 w-full overflow-hidden pointer-events-none">
           {/* Left Floating Sidebar Deck */}
           <AnimatePresence>
             {sidebarOpen && (
               <motion.div
-                initial={{ opacity: 0, x: -320 }}
+                initial={{ opacity: 0, x: -340 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -320 }}
+                exit={{ opacity: 0, x: -340 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="pointer-events-auto shrink-0 z-30"
+                className="absolute top-0 left-0 pointer-events-auto shrink-0 z-30 max-h-full flex flex-col"
               >
                 <SidebarDeck
                   presets={PRESETS}
                   onSelectPreset={handlePresetSelect}
-                  onCustomSearch={handleCustomSearch}
-                  isLoading={activeLoading}
+                  isLoading={isLoading}
                   activePresetId={activePresetId}
                   history={history}
                   onSelectHistoryLocation={(loc) => {
@@ -140,21 +118,21 @@ function App() {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
 
-        {/* Bottom Narrative Card */}
-        <div className="w-full flex flex-col items-center gap-3 pb-2 pointer-events-none z-30">
-          <div className="w-full max-w-2xl pointer-events-auto">
-            <Caption
-              content={currentCaption || caption}
-              location={currentLocation}
-              isLoading={activeLoading}
-              onFlyToLocation={() => {
-                if (currentLocation) {
-                  setCurrentLocation({ ...currentLocation });
-                }
-              }}
-            />
+          {/* Bottom Narrative Card (Floating at Bottom Center) */}
+          <div className="absolute bottom-0 left-0 right-0 flex justify-center pointer-events-none z-30 px-2 pb-1">
+            <div className="w-full max-w-2xl pointer-events-auto">
+              <Caption
+                content={currentCaption || caption}
+                location={currentLocation}
+                isLoading={isLoading}
+                onFlyToLocation={() => {
+                  if (currentLocation) {
+                    setCurrentLocation({ ...currentLocation });
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -163,3 +141,4 @@ function App() {
 }
 
 export default App;
+

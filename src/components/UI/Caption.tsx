@@ -22,7 +22,7 @@ export const Caption = ({ content, location, isLoading, onFlyToLocation }: Capti
     let isMounted = true;
     if (location?.name) {
       setImageLoading(true);
-      imageService.fetchLocationImage(location.name).then((url) => {
+      imageService.fetchLocationImage(location.name, location.lat, location.lng).then((url) => {
         if (isMounted) {
           setImageUrl(url);
           setImageLoading(false);
@@ -35,7 +35,7 @@ export const Caption = ({ content, location, isLoading, onFlyToLocation }: Capti
     return () => {
       isMounted = false;
     };
-  }, [location?.name]);
+  }, [location?.name, location?.lat, location?.lng]);
 
   if (!content && !isLoading) return null;
 
@@ -64,26 +64,26 @@ export const Caption = ({ content, location, isLoading, onFlyToLocation }: Capti
         <div className="absolute -top-12 -right-12 w-28 h-28 rounded-full bg-[#9BCEC1]/30 blur-2xl pointer-events-none" />
 
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-6 space-y-4 text-center">
+          <div className="flex flex-col items-center justify-center py-3 space-y-2.5 text-center">
             {/* Animated Radar Pulse Ring */}
-            <div className="relative w-16 h-16 flex items-center justify-center">
+            <div className="relative w-12 h-12 flex items-center justify-center">
               <div className="absolute inset-0 rounded-full border-2 border-[#9BCEC1] animate-radar" />
-              <div className="w-10 h-10 rounded-full bg-[#FFB6A6] flex items-center justify-center text-[#FFEBD3]">
-                <Compass size={22} className="animate-spin" style={{ animationDuration: '3s' }} />
+              <div className="w-8 h-8 rounded-full bg-[#FFB6A6] flex items-center justify-center text-[#FFEBD3]">
+                <Compass size={18} className="animate-spin" style={{ animationDuration: '3s' }} />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <h4 className="text-base font-extrabold text-[#2D1810] tracking-wide flex items-center justify-center gap-2">
-                <Sparkles size={16} className="text-[#FFB6A6]" />
+            <div className="space-y-1">
+              <h4 className="text-sm md:text-base font-extrabold text-[#2D1810] tracking-wide flex items-center justify-center gap-2">
+                <Sparkles size={15} className="text-[#FFB6A6]" />
                 <span>{APP_CONFIG.name} Lokasyon Keşfediyor...</span>
               </h4>
-              <p className="text-xs font-bold text-[#7A3A2D] max-w-md">
+              <p className="text-[11px] font-bold text-[#7A3A2D] max-w-md">
                 Coğrafi veri tabanı taranıyor, koordinatlar ve hikaye derleniyor.
               </p>
             </div>
 
-            <div className="w-56 h-2 rounded-full overflow-hidden bg-[#FFEBD3] border border-[#FFB6A6]/50">
+            <div className="w-48 h-1.5 rounded-full overflow-hidden bg-[#FFEBD3] border border-[#FFB6A6]/50">
               <div className="h-full rounded-full shimmer-bg" />
             </div>
           </div>

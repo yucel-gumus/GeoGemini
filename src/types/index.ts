@@ -8,7 +8,17 @@ export type Location = {
     imageUrl?: string;
 };
 
-export type PresetCategory = 'Antik' | 'Metropol' | 'Yeşil' | 'Gastronomik' | 'Manevi';
+export type PresetCategory =
+    | 'Antik'
+    | 'Metropol'
+    | 'Yeşil'
+    | 'Gastronomik'
+    | 'Manevi'
+    | 'Sahil & Ada'
+    | 'Macera & Dağ'
+    | 'Tarihi Köyler'
+    | 'Çöl & Vaha'
+    | 'Sanat & Mimari';
 
 export interface Preset {
     id: string;
@@ -31,3 +41,4 @@ export interface AIResponse {
     caption: string;
     imageUrl?: string;
 }
+

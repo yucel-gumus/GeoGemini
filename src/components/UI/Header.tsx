@@ -118,13 +118,9 @@ export const Header = ({ location, sidebarOpen, onToggleSidebar }: HeaderProps) 
 
             <div className="p-3.5 rounded-2xl bg-[#FFB6A6]/20 border border-[#FFB6A6]/50 text-xs space-y-1.5">
               <div className="font-extrabold text-[#2D1810]">Klavye Kısayolları:</div>
-              <ul className="list-disc pl-4 space-y-1 text-[#2D1810] font-semibold">
-                <li><strong className="text-[#7A3A2D]">[1]</strong> - Antik Keşif</li>
-                <li><strong className="text-[#7A3A2D]">[2]</strong> - Metropol Keşif</li>
-                <li><strong className="text-[#7A3A2D]">[3]</strong> - Yeşil Doğa</li>
-                <li><strong className="text-[#7A3A2D]">[4]</strong> - Gastronomik Lezzet</li>
-                <li><strong className="text-[#7A3A2D]">[5]</strong> - Manevi Mekan</li>
-              </ul>
+              <p className="text-[#2D1810] font-semibold text-[11px]">
+                Kategoriler arasında hızlıca gezinmek için klavyenizdeki <strong className="text-[#7A3A2D]">[1 - 9]</strong> ve <strong className="text-[#7A3A2D]">[0]</strong> tuşlarını kullanabilirsiniz.
+              </p>
             </div>
 
             <button

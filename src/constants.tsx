@@ -1,11 +1,22 @@
 import { Preset } from '@/types';
-import { Landmark, Building2, Trees, Utensils, Church } from 'lucide-react';
+import {
+  Landmark,
+  Building2,
+  Trees,
+  Utensils,
+  Church,
+  Waves,
+  Mountain,
+  Castle,
+  Sun,
+  Palette,
+} from 'lucide-react';
 
 export const APP_CONFIG = {
   name: 'KENSAI',
   tagline: 'Akıllı Coğrafi Keşif Uzmanı',
   description:
-    'Kensai, gelişmiş yapay zeka istemleri kullanarak dünyadaki eşsiz antik kentleri, metropolleri, doğa harikalarını, gastronomik ve manevi mekanları saniyeler içinde harita üzerinde keşfetmenizi sağlar.',
+    'Kensai, gelişmiş kategori keşif modlarını kullanarak dünyadaki eşsiz antik kentleri, metropolleri, doğa harikalarını, kıyıları, manevi ve kültürel mekanları saniyeler içinde harita üzerinde keşfetmenizi sağlar.',
 };
 
 export const THEME_COLORS = {
@@ -31,7 +42,7 @@ export const PRESETS: Preset[] = [
   },
   {
     id: 'nature',
-    label: 'Yeşil',
+    label: 'Yeşil Doğa',
     prompt: 'Beni el değmemiş, ekolojik olarak benzersiz ve biyolojik çeşitliliği ile büyüleyen bir doğa harikasına götür.',
     icon: <Trees size={20} />,
   },
@@ -46,6 +57,36 @@ export const PRESETS: Preset[] = [
     label: 'Manevi',
     prompt: 'Bana farklı inançlar için tarihi veya manevi önemi büyük olan, mimari olarak etkileyici bir tapınak, manastır veya kutsal mekan öner.',
     icon: <Church size={20} />,
+  },
+  {
+    id: 'coastal',
+    label: 'Sahil & Ada',
+    prompt: 'Bana masmavi suları, saklı koyları ve büyüleyici ada atmosferi olan cennet gibi bir kıyı konumu göster.',
+    icon: <Waves size={20} />,
+  },
+  {
+    id: 'adventure',
+    label: 'Macera & Dağ',
+    prompt: 'Bana yüksek irtifaları, dramatik kanyonları ve nefes kesen manzaralarıyla bilinen ekstrem bir dağlık bölge öner.',
+    icon: <Mountain size={20} />,
+  },
+  {
+    id: 'historic_village',
+    label: 'Tarihi Köyler',
+    prompt: 'Bana geleneksel mimarisini ve tarihi yapısını korumuş, zamanın durduğu hissini veren otantik bir kasaba veya köy göster.',
+    icon: <Castle size={20} />,
+  },
+  {
+    id: 'desert',
+    label: 'Çöl & Vaha',
+    prompt: 'Bana devasa kum tepeleri, dramatik kanyonlar veya palmiyeli bir vaha yaşamıyla büyüleyen egzotik bir çöl noktası öner.',
+    icon: <Sun size={20} />,
+  },
+  {
+    id: 'art_arch',
+    label: 'Sanat & Mimari',
+    prompt: 'Bana avangart mimarisi, müze veya sokak sanatlarıyla öne çıkan sıra dışı bir kültür şehri veya yapı öner.',
+    icon: <Palette size={20} />,
   },
 ];
 
