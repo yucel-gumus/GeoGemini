@@ -4,15 +4,16 @@ import path from 'path';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
-  const bff =
-    env.VITE_BFF_URL ||
-    process.env.VITE_BFF_URL ||
-    'https://pages-bff.vercel.app';
+  const apiUrl =
+    env.VITE_API_URL ||
+    process.env.VITE_API_URL ||
+    'https://python-backend-270384591051.europe-west3.run.app';
+
   return {
     base: '/GeoGemini/',
     plugins: [react()],
     define: {
-      'import.meta.env.VITE_BFF_URL': JSON.stringify(bff),
+      'import.meta.env.VITE_API_URL': JSON.stringify(apiUrl),
     },
     resolve: {
       alias: {
