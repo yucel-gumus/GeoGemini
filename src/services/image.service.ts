@@ -5,6 +5,9 @@ const BFF_URL =
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY || '';
 
+const isLocalhostUrl = (url?: string) =>
+  !!url && (url.includes('127.0.0.1') || url.includes('localhost'));
+
 export class ImageService {
   private cache: Map<string, string> = new Map();
 
@@ -26,9 +29,10 @@ export class ImageService {
       if (lat !== undefined) queryParams.append('lat', lat.toString());
       if (lng !== undefined) queryParams.append('lng', lng.toString());
 
-      const endpointUrl = API_URL
-        ? `${API_URL}/api/places/photo?${queryParams.toString()}`
-        : `${BFF_URL}/api/geo/places/photo?${queryParams.toString()}`;
+      const endpointUrl =
+        import.meta.env.PROD || !API_URL || isLocalhostUrl(API_URL)
+          ? `${BFF_URL}/api/geo/places/photo?${queryParams.toString()}`
+          : `${API_URL}/api/places/photo?${queryParams.toString()}`;
 
       const headers: Record<string, string> = {};
       if (API_KEY) {

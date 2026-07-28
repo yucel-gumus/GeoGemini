@@ -7,6 +7,10 @@ const BFF_URL =
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY || '';
 
+const isLocalhostUrl = (url?: string) =>
+  !!url && (url.includes('127.0.0.1') || url.includes('localhost'));
+
+
 interface RecommendPlaceResponse {
   success: boolean;
   location?: {
@@ -327,9 +331,10 @@ class AIService {
     }
 
     try {
-      const endpointUrl = API_URL
-        ? `${API_URL}/api/recommend-place`
-        : `${BFF_URL}/api/geo/recommend-place`;
+      const endpointUrl =
+        import.meta.env.PROD || !API_URL || isLocalhostUrl(API_URL)
+          ? `${BFF_URL}/api/geo/recommend-place`
+          : `${API_URL}/api/recommend-place`;
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
