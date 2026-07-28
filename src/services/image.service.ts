@@ -1,9 +1,9 @@
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  'https://python-backend-270384591051.europe-west3.run.app';
-const API_KEY =
-  import.meta.env.VITE_API_KEY ||
-  '';
+const BFF_URL =
+  import.meta.env.VITE_BFF_URL ||
+  (import.meta.env.PROD ? 'https://pages-bff.vercel.app' : 'http://127.0.0.1:3099');
+
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY || '';
 
 export class ImageService {
   private cache: Map<string, string> = new Map();
@@ -26,11 +26,16 @@ export class ImageService {
       if (lat !== undefined) queryParams.append('lat', lat.toString());
       if (lng !== undefined) queryParams.append('lng', lng.toString());
 
-      const res = await fetch(`${API_URL}/api/places/photo?${queryParams.toString()}`, {
-        headers: {
-          'X-API-Key': API_KEY,
-        },
-      });
+      const endpointUrl = API_URL
+        ? `${API_URL}/api/places/photo?${queryParams.toString()}`
+        : `${BFF_URL}/api/geo/places/photo?${queryParams.toString()}`;
+
+      const headers: Record<string, string> = {};
+      if (API_KEY) {
+        headers['X-API-Key'] = API_KEY;
+      }
+
+      const res = await fetch(endpointUrl, { headers });
 
       if (res.ok) {
         const data = await res.json();

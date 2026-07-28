@@ -1,11 +1,11 @@
 import { Location } from '@/types';
 
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  'https://python-backend-270384591051.europe-west3.run.app';
-const API_KEY =
-  import.meta.env.VITE_API_KEY ||
-  '';
+const BFF_URL =
+  import.meta.env.VITE_BFF_URL ||
+  (import.meta.env.PROD ? 'https://pages-bff.vercel.app' : 'http://127.0.0.1:3099');
+
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY || '';
 
 interface RecommendPlaceResponse {
   success: boolean;
@@ -327,12 +327,20 @@ class AIService {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/recommend-place`, {
+      const endpointUrl = API_URL
+        ? `${API_URL}/api/recommend-place`
+        : `${BFF_URL}/api/geo/recommend-place`;
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (API_KEY) {
+        headers['X-API-Key'] = API_KEY;
+      }
+
+      const response = await fetch(endpointUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': API_KEY,
-        },
+        headers,
         body: JSON.stringify({
           prompt: fullPrompt,
           visited_locations: this.visitedLocations,
