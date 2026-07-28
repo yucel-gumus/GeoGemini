@@ -3,7 +3,7 @@ const API_URL =
   'https://python-backend-270384591051.europe-west3.run.app';
 const API_KEY =
   import.meta.env.VITE_API_KEY ||
-  'a9c0347c273b6e94df81d6734fd6735a645d0f36ef0e5ea553901a95bc47de5f';
+  '';
 
 export class ImageService {
   private cache: Map<string, string> = new Map();
