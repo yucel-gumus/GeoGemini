@@ -2,14 +2,59 @@ const BFF_URL =
   import.meta.env.VITE_BFF_URL ||
   (import.meta.env.PROD ? 'https://pages-bff.vercel.app' : 'http://127.0.0.1:3099');
 
-const API_URL = import.meta.env.VITE_API_URL;
-const API_KEY = import.meta.env.VITE_API_KEY || '';
+/**
+ * True if URL is a Google Maps/Places/Static/Street View URL that may embed key=
+ * Never use these as <img src>.
+ */
+function isGoogleMapsKeyBearingUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    if (!u.hostname.endsWith('googleapis.com') && !u.hostname.endsWith('google.com')) {
+      return false;
+    }
+    return (
+      u.pathname.includes('/maps/') ||
+      u.pathname.includes('/place/') ||
+      u.searchParams.has('key')
+    );
+  } catch {
+    return false;
+  }
+}
 
-const isLocalhostUrl = (url?: string) =>
-  !!url && (url.includes('127.0.0.1') || url.includes('localhost'));
+function testImageLoad(url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    let settled = false;
+    const done = (ok: boolean) => {
+      if (settled) return;
+      settled = true;
+      resolve(ok);
+    };
+    const img = new Image();
+    img.onload = () => done(true);
+    img.onerror = () => done(false);
+    img.src = url;
+    setTimeout(() => done(false), 8000);
+  });
+}
 
 export class ImageService {
   private cache: Map<string, string> = new Map();
+  private inflight: Map<string, Promise<string | null>> = new Map();
+
+  /**
+   * Same-origin (or BFF) photo stream URL.
+   * Edge function fetches Google server-side and returns image bytes only.
+   */
+  private buildPhotoStreamUrl(locationName: string, lat?: number, lng?: number): string {
+    const queryParams = new URLSearchParams({
+      name: locationName,
+      mode: 'image',
+    });
+    if (lat !== undefined) queryParams.set('lat', String(lat));
+    if (lng !== undefined) queryParams.set('lng', String(lng));
+    return `${BFF_URL.replace(/\/$/, '')}/api/geo/places/photo?${queryParams.toString()}`;
+  }
 
   async fetchLocationImage(
     locationName: string,
@@ -23,63 +68,49 @@ export class ImageService {
       return this.cache.get(cacheKey)!;
     }
 
-    // Step 1: Call Python Backend Google Maps Places Photo / Street View API
-    try {
-      const queryParams = new URLSearchParams({ name: locationName });
-      if (lat !== undefined) queryParams.append('lat', lat.toString());
-      if (lng !== undefined) queryParams.append('lng', lng.toString());
+    if (this.inflight.has(cacheKey)) {
+      return this.inflight.get(cacheKey)!;
+    }
 
-      const endpointUrl =
-        import.meta.env.PROD || !API_URL || isLocalhostUrl(API_URL)
-          ? `${BFF_URL}/api/geo/places/photo?${queryParams.toString()}`
-          : `${API_URL}/api/places/photo?${queryParams.toString()}`;
-
-      const headers: Record<string, string> = {};
-      if (API_KEY) {
-        headers['X-API-Key'] = API_KEY;
-      }
-
-      const res = await fetch(endpointUrl, { headers });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.success && data.url) {
-          this.cache.set(cacheKey, data.url);
-          return data.url;
+    const work = (async (): Promise<string | null> => {
+      // Step 1: BFF image stream proxy (no Google key in browser)
+      try {
+        const streamUrl = this.buildPhotoStreamUrl(locationName, lat, lng);
+        const ok = await testImageLoad(streamUrl);
+        if (ok) {
+          this.cache.set(cacheKey, streamUrl);
+          return streamUrl;
         }
+      } catch (err) {
+        console.warn('BFF photo stream fetch error:', err);
       }
-    } catch (err) {
-      console.warn('Backend photo API fetch error:', err);
+
+      // Step 2: Category visual fallback (public Unsplash — no secrets)
+      const fallbackUrl = this.getCategoryFallbackImage(locationName);
+      this.cache.set(cacheKey, fallbackUrl);
+      return fallbackUrl;
+    })();
+
+    this.inflight.set(cacheKey, work);
+    try {
+      return await work;
+    } finally {
+      this.inflight.delete(cacheKey);
     }
+  }
 
-    // Step 2: Fallback to Google Maps Static Maps Satellite API if API Key is in frontend env
-    const mapsApiKey =
-      import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
-      import.meta.env.GOOGLE_MAPS_API_KEY;
-
-    if (mapsApiKey) {
-      const cleanName = encodeURIComponent(
-        locationName.split(',')[0].replace(/\(.*?\)/g, '').trim()
-      );
-      const centerParam =
-        lat !== undefined && lng !== undefined
-          ? `${lat},${lng}`
-          : cleanName;
-      const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${centerParam}&zoom=13&size=800x500&maptype=satellite&markers=color:red%7C${centerParam}&key=${mapsApiKey}`;
-      this.cache.set(cacheKey, staticMapUrl);
-      return staticMapUrl;
-    }
-
-    // Step 3: High resolution category visual fallback if offline or no key available
-    const fallbackUrl = this.getCategoryFallbackImage(locationName);
-    this.cache.set(cacheKey, fallbackUrl);
-    return fallbackUrl;
+  /**
+   * Guard for any external assignment of image URLs (AI etc.)
+   */
+  sanitizeImageUrl(url: string | null | undefined): string | null {
+    if (!url) return null;
+    if (isGoogleMapsKeyBearingUrl(url)) return null;
+    return url;
   }
 
   private getCategoryFallbackImage(locationName: string): string {
     const lower = locationName.toLowerCase();
 
-    // Desert / Çöl / Vaha
     if (
       lower.includes('çöl') ||
       lower.includes('vaha') ||
@@ -91,7 +122,6 @@ export class ImageService {
       return 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80';
     }
 
-    // Coastal / Sahil / Ada / Amalfi
     if (
       lower.includes('sahil') ||
       lower.includes('ada') ||
@@ -103,7 +133,6 @@ export class ImageService {
       return 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80';
     }
 
-    // Antique / Antik / Ruin
     if (
       lower.includes('antik') ||
       lower.includes('harabe') ||
@@ -114,7 +143,6 @@ export class ImageService {
       return 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=800&q=80';
     }
 
-    // Metropolis / Metropol / City
     if (
       lower.includes('tokyo') ||
       lower.includes('seul') ||
@@ -125,12 +153,8 @@ export class ImageService {
       return 'https://images.unsplash.com/photo-1477959858617-67f30ac4ce78?auto=format&fit=crop&w=800&q=80';
     }
 
-    // Default nature landscape
     return 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=800&q=80';
   }
 }
 
 export const imageService = new ImageService();
-
-
-
