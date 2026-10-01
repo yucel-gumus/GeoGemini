@@ -1,14 +1,11 @@
 import { Location } from '@/types';
 
-const BFF_URL =
-  import.meta.env.VITE_BFF_URL ||
-  (import.meta.env.PROD ? 'https://pages-bff.vercel.app' : 'http://127.0.0.1:3099');
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== ''
+    ? import.meta.env.VITE_API_URL
+    : (import.meta.env.DEV ? '' : 'https://api.yucelgumus.dev');
 
-const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY || '';
-
-const isLocalhostUrl = (url?: string) =>
-  !!url && (url.includes('127.0.0.1') || url.includes('localhost'));
 
 
 interface RecommendPlaceResponse {
@@ -22,7 +19,7 @@ interface RecommendPlaceResponse {
   error?: string;
 }
 
-// Client-side fallback dataset when offline or BFF unreachable
+// Client-side fallback dataset when offline or backend unreachable
 const MOCK_LOCATIONS: Record<string, Location[]> = {
   antique: [
     {
@@ -331,10 +328,7 @@ class AIService {
     }
 
     try {
-      const endpointUrl =
-        import.meta.env.PROD || !API_URL || isLocalhostUrl(API_URL)
-          ? `${BFF_URL}/api/geo/recommend-place`
-          : `${API_URL}/api/recommend-place`;
+      const endpointUrl = `${API_BASE_URL.replace(/\/$/, '')}/api/recommend-place`;
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',

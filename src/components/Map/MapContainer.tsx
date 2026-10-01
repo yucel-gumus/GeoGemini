@@ -22,9 +22,9 @@ export const MapContainer = ({ location }: MapContainerProps) => {
         worldCopyJump: true,
       }).setView([41.0082, 28.9784], 6);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO',
-        subdomains: 'abcd',
+      L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">HOT</a>',
+        subdomains: 'abc',
         minZoom: 3,
         maxZoom: 19,
       }).addTo(mapInstance.current);

@@ -1,6 +1,9 @@
-const BFF_URL =
-  import.meta.env.VITE_BFF_URL ||
-  (import.meta.env.PROD ? 'https://pages-bff.vercel.app' : 'http://127.0.0.1:3099');
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== ''
+    ? import.meta.env.VITE_API_URL
+    : (import.meta.env.DEV ? '' : 'https://api.yucelgumus.dev');
+
+const API_KEY = import.meta.env.VITE_API_KEY || '';
 
 /**
  * True if URL is a Google Maps/Places/Static/Street View URL that may embed key=
@@ -43,8 +46,8 @@ export class ImageService {
   private inflight: Map<string, Promise<string | null>> = new Map();
 
   /**
-   * Same-origin (or BFF) photo stream URL.
-   * Edge function fetches Google server-side and returns image bytes only.
+   * Direct backend photo stream URL.
+   * Python backend fetches Google server-side and streams image bytes directly.
    */
   private buildPhotoStreamUrl(locationName: string, lat?: number, lng?: number): string {
     const queryParams = new URLSearchParams({
@@ -53,7 +56,8 @@ export class ImageService {
     });
     if (lat !== undefined) queryParams.set('lat', String(lat));
     if (lng !== undefined) queryParams.set('lng', String(lng));
-    return `${BFF_URL.replace(/\/$/, '')}/api/geo/places/photo?${queryParams.toString()}`;
+    if (API_KEY) queryParams.set('api_key', API_KEY);
+    return `${API_BASE_URL.replace(/\/$/, '')}/api/places/photo?${queryParams.toString()}`;
   }
 
   async fetchLocationImage(
@@ -73,7 +77,7 @@ export class ImageService {
     }
 
     const work = (async (): Promise<string | null> => {
-      // Step 1: BFF image stream proxy (no Google key in browser)
+      // Step 1: Backend image stream proxy (no Google key in browser)
       try {
         const streamUrl = this.buildPhotoStreamUrl(locationName, lat, lng);
         const ok = await testImageLoad(streamUrl);
@@ -82,7 +86,7 @@ export class ImageService {
           return streamUrl;
         }
       } catch (err) {
-        console.warn('BFF photo stream fetch error:', err);
+        console.warn('Backend photo stream fetch error:', err);
       }
 
       // Step 2: Category visual fallback (public Unsplash — no secrets)
