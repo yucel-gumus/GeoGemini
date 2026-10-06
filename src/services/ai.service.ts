@@ -3,7 +3,7 @@ import { Location } from '@/types';
 const API_BASE_URL =
   import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== ''
     ? import.meta.env.VITE_API_URL
-    : (import.meta.env.DEV ? '' : 'https://api.yucelgumus.dev');
+    : (import.meta.env.DEV ? '' : 'https://python-backend-270384591051.europe-west3.run.app');
 
 const API_KEY = import.meta.env.VITE_API_KEY || '';
 
