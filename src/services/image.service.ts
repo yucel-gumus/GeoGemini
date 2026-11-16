@@ -3,8 +3,6 @@ const API_BASE_URL =
     ? import.meta.env.VITE_API_URL
     : (import.meta.env.DEV ? '' : 'https://python-backend-270384591051.europe-west3.run.app');
 
-const API_KEY = import.meta.env.VITE_API_KEY || '';
-
 /**
  * True if URL is a Google Maps/Places/Static/Street View URL that may embed key=
  * Never use these as <img src>.
@@ -56,7 +54,6 @@ export class ImageService {
     });
     if (lat !== undefined) queryParams.set('lat', String(lat));
     if (lng !== undefined) queryParams.set('lng', String(lng));
-    if (API_KEY) queryParams.set('api_key', API_KEY);
     return `${API_BASE_URL.replace(/\/$/, '')}/api/places/photo?${queryParams.toString()}`;
   }
 
