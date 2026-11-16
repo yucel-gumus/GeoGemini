@@ -2,23 +2,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* 60-30-10 Design System Palette */
-  --color-60-canvas: #FFEBD3;      /* 60% Warm Cream Base & Canvas */
-  --color-30-surface: #FFB6A6;     /* 30% Structural Panels & Cards */
-  --color-10-accent: #9BCEC1;      /* 10% High-Pop Accent CTAs & Highlights */
+  /* İpek Küllü Arduvaz 60-30-10 Design System Palette */
+  --color-60-highlight: #F5F9F5;
+  --color-60-canvas: #EDF3EE;
+  --color-60-hover: #DBE6DD;
 
-  /* High Contrast Text Tones */
-  --color-text-dark: #2D1810;      /* Deep Espresso for 100% WCAG AAA Legibility on Light Cards */
-  --color-text-light: #FFEBD3;     /* Warm Cream Text on Dark/Coral Cards */
+  --color-30-surface: #DCE3EA;
+  --color-30-border: #BCC7D2;
+  --color-30-muted: #3E5164;
+  --color-30-text: #253341;
 
-  /* Translucent Glass Variations */
-  --color-canvas-80: rgba(255, 235, 211, 0.85);
-  --color-surface-95: rgba(255, 182, 166, 0.95);
-  --color-accent-40: rgba(155, 206, 193, 0.40);
+  --color-10-soft: #F2A488;
+  --color-10-accent: #EC7D55;
+  --color-10-hover: #AB421C;
+
+  /* Translucent Glass Variations (strictly from 10-hex RGB tuples) */
+  --color-canvas-85: rgba(237, 243, 238, 0.85);
+  --color-surface-94: rgba(220, 227, 234, 0.94);
+  --color-accent-40: rgba(236, 125, 85, 0.40);
 
   /* Typography & Geometry */
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  color: var(--color-text-dark);
+  color: var(--color-30-text);
   background-color: var(--color-60-canvas);
   line-height: 1.5;
   font-weight: 400;
@@ -32,7 +37,7 @@ html, body {
   height: 100%;
   overflow: hidden;
   background-color: var(--color-60-canvas);
-  color: var(--color-text-dark);
+  color: var(--color-30-text);
 }
 
 #root {
@@ -44,25 +49,26 @@ html, body {
 
 /* Glassmorphism & UI Card Utilities */
 .glass-panel {
-  background: rgba(255, 235, 211, 0.94) !important;
+  background: rgba(220, 227, 234, 0.94) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 2px solid #FFB6A6 !important;
-  box-shadow: 0 16px 40px rgba(45, 24, 16, 0.12), 0 4px 12px rgba(155, 206, 193, 0.2);
-  color: #2D1810;
+  border: 2px solid #BCC7D2 !important;
+  box-shadow: 0 16px 40px rgba(37, 51, 65, 0.14), 0 4px 12px rgba(62, 81, 100, 0.12);
+  color: #253341;
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .glass-panel-coral {
-  background: rgba(255, 182, 166, 0.96) !important;
+  background: rgba(242, 164, 136, 0.95) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 2px solid #FFEBD3 !important;
-  box-shadow: 0 16px 40px rgba(45, 24, 16, 0.15);
-  color: #2D1810;
+  border: 2px solid #F5F9F5 !important;
+  box-shadow: 0 16px 40px rgba(37, 51, 65, 0.15);
+  color: #253341;
 }
 
 .card-shadow {
-  box-shadow: 0 10px 30px rgba(45, 24, 16, 0.1);
+  box-shadow: 0 10px 30px rgba(37, 51, 65, 0.12);
 }
 
 /* Custom Scrollbar */
@@ -71,29 +77,30 @@ html, body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FFEBD3;
+  background: #EDF3EE;
 }
 ::-webkit-scrollbar-thumb {
-  background: #FFB6A6;
+  background: #BCC7D2;
   border-radius: 999px;
+  transition: background-color 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #9BCEC1;
+  background: #3E5164;
 }
 
 /* Animations */
 @keyframes radar-pulse {
   0% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(155, 206, 193, 0.6);
+    box-shadow: 0 0 0 0 rgba(236, 125, 85, 0.6);
   }
   70% {
     transform: scale(1.08);
-    box-shadow: 0 0 0 20px rgba(155, 206, 193, 0);
+    box-shadow: 0 0 0 20px rgba(236, 125, 85, 0);
   }
   100% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(155, 206, 193, 0);
+    box-shadow: 0 0 0 0 rgba(236, 125, 85, 0);
   }
 }
 
@@ -126,9 +133,9 @@ html, body {
 .shimmer-bg {
   background: linear-gradient(
     90deg,
-    #FFEBD3 0%,
-    rgba(155, 206, 193, 0.4) 50%,
-    #FFEBD3 100%
+    #EDF3EE 0%,
+    rgba(219, 230, 221, 0.9) 50%,
+    #EDF3EE 100%
   );
   background-size: 200% 100%;
   animation: shimmer-pastel 2s infinite;
@@ -136,20 +143,20 @@ html, body {
 
 /* Leaflet Map Styling Override */
 .leaflet-container {
-  background: #FFEBD3 !important;
+  background: #EDF3EE !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
 .leaflet-popup-content-wrapper {
-  background: #FFEBD3 !important;
-  border: 2px solid #FFB6A6 !important;
+  background: #DCE3EA !important;
+  border: 2px solid #BCC7D2 !important;
   border-radius: 18px !important;
-  box-shadow: 0 14px 36px rgba(45, 24, 16, 0.18) !important;
-  color: #2D1810 !important;
+  box-shadow: 0 14px 36px rgba(37, 51, 65, 0.2) !important;
+  color: #253341 !important;
 }
 
 .leaflet-popup-content {
-  color: #2D1810 !important;
+  color: #253341 !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-weight: 700 !important;
   margin: 14px 18px !important;
@@ -157,9 +164,9 @@ html, body {
 }
 
 .leaflet-popup-tip {
-  background: #FFEBD3 !important;
-  border-left: 2px solid #FFB6A6 !important;
-  border-bottom: 2px solid #FFB6A6 !important;
+  background: #DCE3EA !important;
+  border-left: 2px solid #BCC7D2 !important;
+  border-bottom: 2px solid #BCC7D2 !important;
 }
 
 .leaflet-popup-close-button {
@@ -168,21 +175,21 @@ html, body {
 
 .leaflet-control-zoom {
   border: none !important;
-  box-shadow: 0 8px 24px rgba(45, 24, 16, 0.15) !important;
+  box-shadow: 0 8px 24px rgba(37, 51, 65, 0.15) !important;
   border-radius: 14px !important;
   overflow: hidden;
 }
 
 .leaflet-control-zoom a {
-  background: #FFEBD3 !important;
-  color: #2D1810 !important;
-  border: 1.5px solid #FFB6A6 !important;
+  background: #DCE3EA !important;
+  color: #253341 !important;
+  border: 1.5px solid #BCC7D2 !important;
   font-weight: 800 !important;
   transition: all 0.2s ease !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background: #9BCEC1 !important;
-  color: #2D1810 !important;
-  border-color: #9BCEC1 !important;
+  background: #EC7D55 !important;
+  color: #253341 !important;
+  border-color: #EC7D55 !important;
 }

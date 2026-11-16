@@ -20,11 +20,16 @@ export const APP_CONFIG = {
 };
 
 export const THEME_COLORS = {
-  canvas: '#FFEBD3',      // 60% Warm Cream Base & Canvas
-  surface: '#FFB6A6',     // 30% Structural Coral & Panels
-  accent: '#9BCEC1',      // 10% High-Pop Mint Accent CTAs
-  textDark: '#2D1810',    // Espresso High-Contrast Text
-  textMuted: '#7A3A2D',   // Muted Coffee Text
+  highlight: '#F5F9F5',   // 60% Brightest Mist Highlight
+  canvas: '#EDF3EE',      // 60% Açık Sis Yeşili Page Canvas
+  hover: '#DBE6DD',       // 60% Calm Hover / Tag Fill
+  surface: '#DCE3EA',     // 30% Küllü Arduvaz Cards & Panels
+  border: '#BCC7D2',      // 30% Borders & Dividers
+  textMuted: '#3E5164',   // 30% Muted Slate Text
+  textDark: '#253341',    // 30% Primary Slate Ink
+  softAccent: '#F2A488',  // 10% Soft Highlight / Badge
+  accent: '#EC7D55',      // 10% Kiremit-Mercan Primary CTA
+  accentHover: '#AB421C', // 10% CTA Hover & Highlight
 };
 
 export const PRESETS: Preset[] = [

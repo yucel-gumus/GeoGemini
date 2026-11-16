@@ -68,17 +68,17 @@ function App() {
   }, [handlePresetSelect]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#9BCEC1] font-sans">
+    <div className="relative w-full h-screen overflow-hidden bg-[#EDF3EE] font-sans">
       {/* Background Map Component */}
       <div className="absolute inset-0 z-0">
         <MapContainer location={currentLocation} />
 
-        {/* Ambient Top & Bottom Gradients using 60-30-10 palette */}
+        {/* Ambient Top & Bottom Gradients using İpek Küllü Arduvaz 60-30-10 palette */}
         <div
           className="absolute inset-0 pointer-events-none z-10"
           style={{
             background:
-              'linear-gradient(to bottom, rgba(155, 206, 193, 0.45) 0%, transparent 18%, transparent 80%, rgba(155, 206, 193, 0.6) 100%)',
+              'linear-gradient(to bottom, rgba(237, 243, 238, 0.55) 0%, transparent 18%, transparent 80%, rgba(237, 243, 238, 0.7) 100%)',
           }}
         />
       </div>
@@ -135,8 +135,8 @@ function App() {
             </div>
           </div>
         </div>
-        <footer className="w-full py-3 text-center text-xs text-gray-400 border-t border-gray-700/30 mt-auto">
-          <p>Geliştirici: <a href="https://www.yucelgumus.dev/" target="_blank" rel="noopener noreferrer" className="font-semibold underline hover:text-gray-200 transition-colors">Yücel Gümüş</a></p>
+        <footer className="pointer-events-auto w-fit mx-auto px-4 py-1.5 rounded-full bg-[#DCE3EA]/90 backdrop-blur-sm text-center text-xs text-[#3E5164] border border-[#BCC7D2] mt-auto shadow-sm">
+          <p>Geliştirici: <a href="https://www.yucelgumus.dev/" target="_blank" rel="noopener noreferrer" className="font-semibold text-[#253341] underline hover:text-[#AB421C] transition-colors duration-200">Yücel Gümüş</a></p>
         </footer>
       </div>
     </div>

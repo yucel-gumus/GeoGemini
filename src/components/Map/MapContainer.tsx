@@ -59,16 +59,16 @@ export const MapContainer = ({ location }: MapContainerProps) => {
               position: absolute;
               inset: 0;
               border-radius: 50%;
-              background: rgba(255, 182, 166, 0.45);
+              background: rgba(236, 125, 85, 0.45);
               animation: radar-pulse 2s ease-out infinite;
             "></div>
             <div style="
               position: absolute;
               inset: 8px;
-              background: #FFB6A6;
+              background: #EC7D55;
               border-radius: 50%;
-              box-shadow: 0 6px 18px rgba(255, 182, 166, 0.6);
-              border: 3px solid #FFEBD3;
+              box-shadow: 0 6px 18px rgba(37, 51, 65, 0.35);
+              border: 3px solid #F5F9F5;
               display: flex;
               align-items: center;
               justify-content: center;
@@ -76,7 +76,7 @@ export const MapContainer = ({ location }: MapContainerProps) => {
               <div style="
                 width: 10px;
                 height: 10px;
-                background: #FFEBD3;
+                background: #F5F9F5;
                 border-radius: 50%;
               "></div>
             </div>
@@ -91,8 +91,8 @@ export const MapContainer = ({ location }: MapContainerProps) => {
         .bindPopup(
           `
           <div style="text-align: center; padding: 2px;">
-            <div style="font-weight: 800; font-size: 15px; color: #2D1810; margin-bottom: 2px;">${name}</div>
-            <div style="font-size: 11px; font-weight: 700; color: #7A3A2D;">Keşfedilen Lokasyon</div>
+            <div style="font-weight: 800; font-size: 15px; color: #253341; margin-bottom: 2px;">${name}</div>
+            <div style="font-size: 11px; font-weight: 700; color: #3E5164;">Keşfedilen Lokasyon</div>
           </div>
         `,
           { closeButton: false }
